@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+package battery;
+
+option go_package = "crossocean.com/edge_gateway/pb/mcu/battery";
+
+// 学习说明：
+// - 本文件定义 MCU 电池侧上报的主数据结构；
+// - 许多数值字段使用缩放单位（0.1V/0.1A/0.1% 等），显示前需换算；
+// - repeated 字段会在各语言生成动态数组/切片类型。
+
+// 数据状态
+enum DataStatus
+{
+  ALL_NORMAL    = 0;   // 数据正常
+  TIMEOUT       = 1;   // 数据通信超时
+  CRC_ERROR     = 2;   // CRC错误
+  INVALID_PARAM = 3;   // 无效参数
+  NOT_INIT      = 4;   // 数据未初始化
+  HW_FAULT      = 5;   // 硬件故障
+  BUS_ERROR     = 6;   // 总线错误
+  NO_RESPONSE   = 7;   // 无响应
+  OTHER_ERROR   = 255; // 其他错误
+}
+
+// 电池故障码
+enum BatteryErrorCode
+{
+  // 该枚举按位定义（bitmask），error_code 可同时携带多个故障：
+  // 例如 error_code = 1 | 64 表示“单体过压 + 放电过温”。
+  NO_ERROR               = 0;    // 无故障
+  CELL_OVER_VOLTAGE      = 1;    // 单体过压保护
+  CELL_UNDER_VOLTAGE     = 2;    // 单体欠压保护
+  PACK_OVER_VOLTAGE      = 4;    // 整组过压保护
+  PACK_UNDER_VOLTAGE     = 8;    // 整组欠压保护
+  CHARGE_OVER_TEMP       = 16;   // 充电过温保护
+  CHARGE_LOW_TEMP        = 32;   // 充电低温保护
+  DISCHARGE_OVER_TEMP    = 64;   // 放电过温保护
+  DISCHARGE_LOW_TEMP     = 128;  // 放电低温保护
+  CHARGE_OVER_CURRENT    = 256;  // 充电过流保护
+  DISCHARGE_OVER_CURRENT = 512;  // 放电过流保护
+  SHORT_CIRCUIT          = 1024; // 短路保护
+  FRONT_END_IC_ERROR     = 2048; // 前端检测IC错误
+  SOFTWARE_LOCK_MOS      = 4096; // 软件锁定MOS
+}
+
+// DCDC信息消息
+message DCDCData
+{
+  uint32 status      = 1; // 状态码（暂时不使用）
+  uint32 bus_voltage = 2; // 母线电压，单位：0.1V
+  int32  out_current = 3; // 输出电流，单位：0.1A
+  int32  out_power   = 4; // 输出功率，单位：0.01kW
+  int32  temp        = 5; // 电源温度,单位：°C
+}
+
+// PCS信息消息
+message PCSData
+{
+  uint32 status      = 1; // 状态码（暂时不使用）
+  uint32 out_voltage = 2; // 输出电压，单位：0.1V
+  int32  out_current = 3; // 输出电流，单位：0.1A
+  int32  out_power   = 4; // 输出功率，单位：0.01kW
+  int32  temp        = 5; // 电源温度,单位：°C
+}
+
+// 输出电池消息
+message OutBatteryMsg
+{
+  uint32              port        = 1;  // UDP传输端口号
+  
+  uint32              battery_num = 2;  // 电池数量（通常与 batteries 长度一致）
+  repeated BatteryMsg batteries   = 3;  // 电池信息列表
+
+  // 电池组总体状态：
+  //==============================UI===========================
+  // - 串联系统：表示整组状态；
+  // - 并联系统：通常表示 1 号电池状态（按当前业务定义）。
+  uint32 pack_voltage = 4;  // 电池组总电压，单位：0.1V
+  int32  pack_current = 5;  // 电池组总电流，单位：0.1A
+  uint32 pack_rsoc    = 6;  // 电池组整体SOC，单位：0.1%
+  bool   pack_alarm   = 7;  // 电池组报警标志
+
+  // 其他电源相关模块信息
+  uint32            dcdc_num  = 8;  // dcdc数量(常量)
+  repeated DCDCData dcdc_list = 9;  // dcdc数据列表
+  uint32            pcs_num   = 10; // pcs数量(常量)
+  repeated PCSData  pcs_list  = 11; // pcs数据列表
+}
+
+// 电池信息消息
+message BatteryMsg
+{
+  DataStatus data_status = 1; // 数据状态
+  uint64     error_code  = 2; // 错误码（按 BatteryErrorCode 位组合）
+
+  // 电池基本信息
+  uint32 rsoc              = 3; // 剩余容量百分比，单位：0.1%
+  uint32 voltage           = 4; // 总电压，单位：0.1V
+  int32  current           = 5; // 总电流，单位：0.1A，充电正/放电负
+  uint32 residual_capacity = 6; // 剩余容量，单位：0.1Ah
+  uint32 nominal_capacity  = 7; // 标称容量，单位：0.1Ah
+  uint32 cycle_count       = 8; // 循环次数
+
+  // 电芯信息
+  uint32          cell_series_count = 9;  // 电池串数（常量）
+  repeated uint32 cell_voltages     = 10; // 电池单体电压数组，单位：0.001V（mV 量级）
+
+  // 温度信息
+  uint32         ntc_num   = 11; // NTC传感器个数(常量)
+  repeated int32 ntc_temps = 12; // NTC温度数组，单位：°C
+}
