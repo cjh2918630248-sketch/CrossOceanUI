@@ -57,7 +57,5 @@ compile_commands.json
 bin/
 deploy/
 
-# 忽略无后缀的 C++ 编译可执行文件
-/*
-!*/
 
+examples/RPM/RPM
