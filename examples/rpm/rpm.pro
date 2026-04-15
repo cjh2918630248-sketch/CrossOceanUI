@@ -14,7 +14,7 @@ SOURCES += \
 
 HEADERS +=
 
-include($$PWD/../../ui/RPM/rpmUI.pri)
+include($$PWD/../../ui/rpm/rpm.pri)
 
 FORMS +=
 
@@ -26,7 +26,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 #指定编译生成的可执行文件放到根目录下的bin目录
 !android:!ios {
-DESTDIR = $$PWD/../../bin/examples/RPM
+DESTDIR = $$PWD/../../bin/examples/rpm
 }
 
 MOC_DIR     = temp/moc

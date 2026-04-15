@@ -1,8 +1,13 @@
 QT += widgets svg
 
 CONFIG += c++17
+CONFIG += warn_off
+CONFIG += resources_big
+CONFIG += console
+CONFIG -= debug_and_release
+DEFINES += QT_MESSAGELOGCONTEXT
 
-include(../../ui/compasses/compassesUI.pri)
+include(../../ui/compasses/compasses.pri)
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -19,3 +24,13 @@ HEADERS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+#指定编译生成的可执行文件放到根目录下的bin目录
+!android:!ios {
+DESTDIR = $$PWD/../../bin/examples/compasses
+}
+
+MOC_DIR     = temp/moc
+RCC_DIR     = temp/rcc
+UI_DIR      = temp/ui
+OBJECTS_DIR = temp/obj

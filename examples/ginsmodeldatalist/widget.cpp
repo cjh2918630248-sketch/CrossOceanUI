@@ -1,5 +1,5 @@
 #include "widget.h"
-#include "../ginsdatalistmodel.h"
+#include "ginsdatalistmodel.h"
 
 #include <QListView>
 #include <QLabel>

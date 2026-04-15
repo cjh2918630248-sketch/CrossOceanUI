@@ -23,11 +23,11 @@ FORMS += \
 
 LIBS += -lprotobuf
 
-include($$PWD/../../../proto/mcu/proto/proto.pri)
+include($$PWD/../../proto/mcu/proto/proto.pri)
 
 #指定编译生成的可执行文件放到根目录下的bin目录
 !android:!ios {
-DESTDIR = $$PWD/../../../bin/examples/protobuf/protobufmodel
+DESTDIR = $$PWD/../../bin/examples/protobuf/protobufmodel
 }
 
 MOC_DIR     = temp/moc

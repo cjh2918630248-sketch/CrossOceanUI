@@ -17,7 +17,6 @@
 #define MQTT_H
 
 #include <QtMqtt/qmqttclient.h>
-
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QObject>
