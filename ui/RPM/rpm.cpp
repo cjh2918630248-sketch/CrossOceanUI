@@ -100,9 +100,8 @@ void RPM::paintEvent(QPaintEvent *event)
     // 4) 外环 Angle 活跃填充：
     //    以 270° 为中点，正值向右、负值向左扩展，最大扩展 60°。
     if (angleAbsRatio > 0.0) {
-        const double span = 60.0 * angleAbsRatio;
         const double startAngle = 270.0;
-        // Angle 方向：正值向右，负值向左。
+        const double span = 60.0 * angleAbsRatio;
         const double sweep = (m_angle >= 0.0) ? span : -span;
         const double endAngle = startAngle + sweep;
         const QColor angleColor = QColor::fromHsvF((0.55 - 0.55 * angleAbsRatio), 0.9, 1.0);
@@ -115,7 +114,41 @@ void RPM::paintEvent(QPaintEvent *event)
         painter.fillPath(angleActivePath, QBrush(angleColor));
     }
 
-    // 5) 最后绘制轮廓线，让边界更清晰。
+    // 5) 参照指示条（与参考图一致）：橙色，RPM 为条内水平线，Angle 为弧上径向短线。
+    const QColor markerColor(255, 130, 40);
+
+    // RPM：水平条沿竖条上下移动，位置与填充“前沿”一致（0 在中间，正上负下）。
+    {
+        const double halfHeight = midRect.height() * 0.5;
+        const double rpmNorm = std::max(-1.0, std::min(m_rpm / std::max(1.0, m_maxAbsRpm), 1.0));
+        const double markerY = midRect.center().y() - rpmNorm * halfHeight;
+        const double barH = std::max(3.0, 5.0 * scale);
+        const double inset = std::max(1.0, 2.0 * scale);
+        const QRectF rpmMarkerRect(midRect.left() + inset,
+                                   markerY - barH * 0.5,
+                                   midRect.width() - 2.0 * inset,
+                                   barH);
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(markerColor);
+        painter.drawRoundedRect(rpmMarkerRect, barH * 0.5, barH * 0.5);
+    }
+
+    // Angle：在环带内沿当前角度画径向短线（-90°~+90° 映射到弧上 210°~330°，与填充范围一致）。
+    {
+        const double maxAbsAngle = std::max(1.0, m_maxAbsAngle);
+        const double angNorm = std::max(-1.0, std::min(m_angle / maxAbsAngle, 1.0));
+        const double needleDeg = 270.0 + angNorm * 60.0;
+        const double nd = needleDeg * M_PI / 180.0;
+        const QPointF pInner(arcCenter.x() + innerRadius * std::cos(nd),
+                             arcCenter.y() - innerRadius * std::sin(nd));
+        const QPointF pOuter(arcCenter.x() + outerRadius * std::cos(nd),
+                             arcCenter.y() - outerRadius * std::sin(nd));
+        painter.setBrush(Qt::NoBrush);
+        painter.setPen(QPen(markerColor, std::max(2.5, 4.0 * scale), Qt::SolidLine, Qt::FlatCap));
+        painter.drawLine(pInner, pOuter);
+    }
+
+    // 6) 最后绘制轮廓线，让边界更清晰。
     painter.setPen(QPen(Qt::black, 2));
     painter.setBrush(Qt::NoBrush);
     painter.drawArc(outerRect, 210 * 16, 120 * 16);
@@ -124,7 +157,7 @@ void RPM::paintEvent(QPaintEvent *event)
     painter.drawLine(outerEnd, innerEnd);
     painter.drawRect(midRect);
 
-    // 6) 绘制文本标签。
+    // 7) 绘制文本标签。
     painter.setPen(QPen(Qt::black, 1));
     QFont font = painter.font();
     font.setPointSizeF(std::max(12.0, 18.0 * scale));
