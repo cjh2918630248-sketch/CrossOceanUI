@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/example">
-        <file>gins.qss</file>
-    </qresource>
-</RCC>
