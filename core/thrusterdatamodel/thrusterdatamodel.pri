@@ -10,4 +10,4 @@ SOURCES += \
 HEADERS += \
     $$PWD/thrusterdatamodel.h
 
-include($$PWD/../../../proto/mcu/proto/proto.pri)
+include($$PWD/../../proto/mcu/proto/proto.pri)

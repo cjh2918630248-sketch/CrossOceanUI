@@ -47,9 +47,9 @@ CompassesWidget::CompassesWidget(QWidget *parent)
     const int instrumentSize = 300;
     const int headingInset = 37;
 
-    m_headingBg = new QSvgWidget(":/heading/heading_bg.svg", this);
-    m_headingPointer = new RotatingSvgWidget(":/heading/heading_pointer.svg", this);
-    m_rollPitchAll = new QSvgWidget(":/roll_pitch/roll_pitch_all.svg", this);
+    m_headingBg = new QSvgWidget(":/asset/headingbg.svg", this);
+    m_headingPointer = new RotatingSvgWidget(":/asset/headingpointer.svg", this);
+    m_rollPitchAll = new QSvgWidget(":/asset/rollpitchall.svg", this);
     m_rollPitchAll->setFixedSize(instrumentSize, instrumentSize);
 
     auto *headingContainer = new QWidget(this);

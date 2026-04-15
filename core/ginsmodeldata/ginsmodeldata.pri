@@ -12,6 +12,6 @@ SOURCES += \
 HEADERS += \
     $$PWD/ginsdatamodel.h
 
-include($$PWD/../../../proto/mcu/proto/proto.pri)
+include($$PWD/../../proto/mcu/proto/proto.pri)
 
 }
