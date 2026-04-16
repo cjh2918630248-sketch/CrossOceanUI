@@ -8,11 +8,9 @@ CONFIG -= debug_and_release #禁止同时生成 Debug + Release 版本
 #让 qDebug () /qInfo () 等日志输出，自动带上 文件名 + 行号 + 函数名
 DEFINES += QT_MESSAGELOGCONTEXT
 
-<<<<<<< HEAD
+
 include(../../ui/thrusterrpm/thrusterrpm.pri)
-=======
-include(../../ui/thrusterRPM/thrusterRPMUI.pri)
->>>>>>> origin/main
+
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -32,14 +30,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 #指定编译生成的可执行文件放到根目录下的bin目录
 !android:!ios {
-<<<<<<< HEAD
 DESTDIR = $$PWD/../../bin/examples/thrusterui
-=======
-DESTDIR = $$PWD/../../bin/examples/thrusterUI
->>>>>>> origin/main
 }
 
 MOC_DIR     = temp/moc
 RCC_DIR     = temp/rcc
 UI_DIR      = temp/ui
 OBJECTS_DIR = temp/obj
+
+
