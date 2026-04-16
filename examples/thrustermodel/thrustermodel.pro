@@ -21,12 +21,12 @@ HEADERS += \
 
 LIBS += -lprotobuf
 
+
 include($$PWD/../../core/thrusterdatamodel/thrusterdatamodel.pri)
-include($$PWD/../../../core/protobuf/thruster_model/thrusterData.pri)
 
 #指定编译生成的可执行文件放到根目录下的bin目录
 !android:!ios {
-DESTDIR = $$PWD/../../../bin/examples/protobuf/thrusterModel
+DESTDIR = $$PWD/../../bin/examples/protobuf/thrustermodel
 }
 
 MOC_DIR     = temp/moc

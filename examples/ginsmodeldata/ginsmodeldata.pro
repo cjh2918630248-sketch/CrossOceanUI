@@ -4,7 +4,6 @@ QT       -= gui
 TEMPLATE = app
 CONFIG   += c++17 console
 CONFIG   -= app_bundle
-
 CONFIG += warn_off
 CONFIG += resources_big
 CONFIG += console
@@ -23,11 +22,7 @@ include($$PWD/../../core/ginsmodeldata/ginsmodeldata.pri)
 !android:!ios {
 DESTDIR = $$PWD/../../bin/examples/ginsmodeldata
 }
-
 MOC_DIR     = temp/moc
 RCC_DIR     = temp/rcc
 UI_DIR      = temp/ui
 OBJECTS_DIR = temp/obj
-
-include($$PWD/../ginsData.pri)
-
