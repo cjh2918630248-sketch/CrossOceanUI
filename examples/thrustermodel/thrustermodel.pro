@@ -21,7 +21,6 @@ HEADERS += \
 
 LIBS += -lprotobuf
 
-
 include($$PWD/../../core/thrusterdatamodel/thrusterdatamodel.pri)
 
 #指定编译生成的可执行文件放到根目录下的bin目录

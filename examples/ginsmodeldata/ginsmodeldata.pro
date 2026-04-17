@@ -11,6 +11,13 @@ CONFIG -= debug_and_release
 DEFINES += QT_MESSAGELOGCONTEXT
 
 
+CONFIG += warn_off
+CONFIG += resources_big
+CONFIG += console
+CONFIG -= debug_and_release
+DEFINES += QT_MESSAGELOGCONTEXT
+
+
 SOURCES += main.cpp
 
 LIBS += -lprotobuf
@@ -22,6 +29,7 @@ include($$PWD/../../core/ginsmodeldata/ginsmodeldata.pri)
 !android:!ios {
 DESTDIR = $$PWD/../../bin/examples/ginsmodeldata
 }
+
 MOC_DIR     = temp/moc
 RCC_DIR     = temp/rcc
 UI_DIR      = temp/ui

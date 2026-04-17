@@ -8,9 +8,7 @@ CONFIG -= debug_and_release #禁止同时生成 Debug + Release 版本
 #让 qDebug () /qInfo () 等日志输出，自动带上 文件名 + 行号 + 函数名
 DEFINES += QT_MESSAGELOGCONTEXT
 
-
 include(../../ui/thrusterrpm/thrusterrpm.pri)
-
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -37,5 +35,3 @@ MOC_DIR     = temp/moc
 RCC_DIR     = temp/rcc
 UI_DIR      = temp/ui
 OBJECTS_DIR = temp/obj
-
-
