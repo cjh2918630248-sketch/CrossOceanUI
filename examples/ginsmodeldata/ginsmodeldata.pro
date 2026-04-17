@@ -4,6 +4,12 @@ QT       -= gui
 TEMPLATE = app
 CONFIG   += c++17 console
 CONFIG   -= app_bundle
+CONFIG += warn_off
+CONFIG += resources_big
+CONFIG += console
+CONFIG -= debug_and_release
+DEFINES += QT_MESSAGELOGCONTEXT
+
 
 CONFIG += warn_off
 CONFIG += resources_big
@@ -28,6 +34,3 @@ MOC_DIR     = temp/moc
 RCC_DIR     = temp/rcc
 UI_DIR      = temp/ui
 OBJECTS_DIR = temp/obj
-
-include($$PWD/../ginsData.pri)
-
