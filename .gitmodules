@@ -1,6 +1,0 @@
-[submodule "3rdparty/qtmqtt"]
-	path = 3rdparty/qtmqtt
-	url = https://github.com/qt/qtmqtt.git
-[submodule "proto/mcu"]
-	path = proto/mcu
-	url = https://github.com/YZH-JTU/protobuf_file.git
