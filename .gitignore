@@ -58,3 +58,7 @@ compile_commands.json
 bin/
 deploy/
 
+#.vscode & .trae
+**/**/.vscode/
+**/**/.trae/
+
