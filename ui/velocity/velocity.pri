@@ -5,8 +5,7 @@
 INCLUDEPATH += $$PWD
 
 SOURCES += \
-    $$PWD/speedgauge.cpp
+    $$PWD/velocity.cpp
 
 HEADERS += \
-    $$PWD/speedgauge.h \
-    $$PWD/velocityinputinterface.h
+    $$PWD/velocity.h

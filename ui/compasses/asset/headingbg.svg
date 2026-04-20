@@ -16,6 +16,7 @@
 	.st10{fill:#7F0036;}
 	.st11{fill:#EE3424;}
 </style>
+<circle cx="149.8" cy="149.8" r="149.8" fill="#000000"/>
 <linearGradient id="backHorizon_2_" gradientUnits="userSpaceOnUse" x1="149.8" y1="3817" x2="149.8" y2="3517.3999" gradientTransform="matrix(1 0 0 1 0 -3517.3999)">
 	<stop  offset="0.5" style="stop-color:#558EBB"/>
 	<stop  offset="0.501" style="stop-color:#6AA433"/>

@@ -21,11 +21,11 @@ Widget::~Widget()
 
 void Widget::Init()
 {
-    ui->SpeedGuageWidget->setSpeed(0);
+    ui->SpeedGuageWidget->SetVelocity(0);
 }
 
 void Widget::on_speed_lineedit_returnPressed()
 {
-    ui->SpeedGuageWidget->setSpeed(ui->speed_lineedit->text().toDouble());
+    ui->SpeedGuageWidget->SetVelocity(ui->speed_lineedit->text().toDouble());
 }
 

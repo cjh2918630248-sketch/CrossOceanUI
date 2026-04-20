@@ -1,19 +1,15 @@
-#include "speedgauge.h"
+#include "velocity.h"
 #include <QPainter>
 #include <QPainterPath>
 #include <cmath>
 
-SpeedGauge::SpeedGauge(QWidget *parent)
-    : QWidget(parent)
+Velocity::Velocity(QWidget *parent)
+    : QWidget{parent}
 {
     this->setFixedSize(300,200);
 }
 
-SpeedGauge::~SpeedGauge()
-{
-}
-
-void SpeedGauge::setSpeed(double speed)
+void Velocity::SetVelocity(double speed)
 {
     const double clamped = qBound(m_minSpeed, speed, m_maxSpeed);
     if (qFuzzyCompare(m_speed, clamped)) { //浮点数在计算机中存在精度误差，该方法可以比较判断两个浮点数是否相等
@@ -23,12 +19,12 @@ void SpeedGauge::setSpeed(double speed)
     update();
 }
 
-double SpeedGauge::speed() const
+double Velocity::GetVelocity() const
 {
     return m_speed;
 }
 
-void SpeedGauge::paintEvent(QPaintEvent *event)
+void Velocity::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event)
 
@@ -78,5 +74,4 @@ void SpeedGauge::paintEvent(QPaintEvent *event)
 
     painter.drawArc(outerRect, 30 * 16, 120 * 16);
     painter.drawArc(innerRect, 30 * 16, 120 * 16);
-
 }
