@@ -28,13 +28,13 @@ HEADERS += \
 INCLUDEPATH += $$PWD
 
 # core datamodel
-INCLUDEPATH += $$PWD/../../core/datamodel
+include($$PWD/../../core/datamodel/datamodel.pri)
 
-SOURCES += \
-    $$PWD/../../core/datamodel/pointslistmodel.cpp
+# SOURCES += \
+#     $$PWD/../../core/datamodel/pointslistmodel.cpp
 
-HEADERS += \
-    $$PWD/../../core/datamodel/pointslistmodel.h
+# HEADERS += \
+#     $$PWD/../../core/datamodel/pointslistmodel.h
 
 #指定编译生成的可执行文件放到根目录下的bin目录
 !android:!ios {

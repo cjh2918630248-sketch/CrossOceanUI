@@ -347,6 +347,11 @@ ThrusterView::ThrusterView(QWidget *parent)
             this, &ThrusterView::onModelError);
 }
 
+void ThrusterView::setSampleIndex(const int &sample_index)
+{
+    m_sampleIndex = sample_index;
+}
+
 void ThrusterView::setupUI()
 {
     setWindowTitle("单推进器状态监控 — Thruster View");
@@ -557,6 +562,8 @@ void ThrusterView::onDeserialize()
 
 void ThrusterView::onClear()
 {
+    //m_sampleIndex = 0; //点击清空之后索引从0开始
+    this->setSampleIndex(0);
     m_model->fromMap(QVariantMap());
     m_model->setPort(0);
     m_model->setThrusterNum(0);
