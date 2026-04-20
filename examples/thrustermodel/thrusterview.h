@@ -73,6 +73,8 @@ class ThrusterView : public QWidget
 public:
     explicit ThrusterView(QWidget *parent = nullptr);
 
+    void setSampleIndex(const int& sample_index);
+
 private slots:
     void onLoadSampleData();
     void onSerialize();

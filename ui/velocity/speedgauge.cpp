@@ -6,6 +6,7 @@
 SpeedGauge::SpeedGauge(QWidget *parent)
     : QWidget(parent)
 {
+    this->setFixedSize(300,200);
 }
 
 SpeedGauge::~SpeedGauge()
@@ -15,7 +16,7 @@ SpeedGauge::~SpeedGauge()
 void SpeedGauge::setSpeed(double speed)
 {
     const double clamped = qBound(m_minSpeed, speed, m_maxSpeed);
-    if (qFuzzyCompare(m_speed, clamped)) {
+    if (qFuzzyCompare(m_speed, clamped)) { //浮点数在计算机中存在精度误差，该方法可以比较判断两个浮点数是否相等
         return;
     }
     m_speed = clamped;

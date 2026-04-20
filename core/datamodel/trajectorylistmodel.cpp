@@ -302,7 +302,7 @@ int TrajectoryListModel::rowCount(const QModelIndex &parent) const {
 QVariant TrajectoryListModel::data(const QModelIndex &index, int role) const {
   // 返回指定索引和角色的数据
   if (index.row() < 0 || index.row() >= mList.count())  // 检查索引是否有效
-    return QVariant::QVariant();                        // 返回空 QVariant
+    return QVariant();                        // 返回空 QVariant
 
   const ModelDataTrajectory &data = mList[index.row()];
 
@@ -313,7 +313,7 @@ QVariant TrajectoryListModel::data(const QModelIndex &index, int role) const {
   else if (role == PathRole)
     return data.path();
 
-  return QVariant::QVariant();  // 返回空 QVariant
+  return QVariant();  // 返回空 QVariant
 }
 
 bool TrajectoryListModel::modelData(int index,

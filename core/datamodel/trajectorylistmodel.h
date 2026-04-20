@@ -3,6 +3,8 @@
 
 #include <QAbstractListModel>
 #include <QMetaType>
+#include <QDebug>
+#include <QVariant>
 
 #include "distancelistmodel.h"
 #include "pointslistmodel.h"
