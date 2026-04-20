@@ -2,7 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
-#include "speedgauge.h"
+#include "velocity.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -25,7 +25,5 @@ private slots:
 
 private:
     Ui::Widget *ui;
-
-    // SpeedGauge* m_speed_guage = nullptr;
 };
 #endif // WIDGET_H

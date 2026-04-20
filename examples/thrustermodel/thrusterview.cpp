@@ -148,7 +148,6 @@ ThrusterCardWidget::ThrusterCardWidget(const QString &title, QWidget *parent)
     statusRow->addWidget(m_lblErrorCode);
     root->addLayout(statusRow);
 
-    // ── 分割线 ──
     auto makeHLine = [this]() {
         auto *line = new QFrame(this);
         line->setFrameShape(QFrame::HLine);

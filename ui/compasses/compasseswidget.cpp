@@ -30,7 +30,7 @@ protected:
         painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
         const QPointF c = rect().center();
-        painter.translate(c);
+        painter.translate(c); //将坐标原点由原来的窗口左上角(0,0)移动到点c的位置作为原点(0,0)
         painter.rotate(m_angleDeg);
         painter.translate(-c);
         m_renderer.render(&painter, rect());
@@ -59,7 +59,7 @@ CompassesWidget::CompassesWidget(QWidget *parent)
     headingOverlay->setContentsMargins(headingInset, headingInset, headingInset, headingInset);
     headingOverlay->addWidget(m_headingBg);
     headingOverlay->addWidget(m_headingPointer);
-    headingOverlay->setCurrentWidget(m_headingPointer);
+    headingOverlay->setCurrentWidget(m_headingPointer); //e确保m_headingPointer在逻辑上处于激活状态
     m_headingPointer->raise();
 
     auto *rowLayout = new QHBoxLayout;

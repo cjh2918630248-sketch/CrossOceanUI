@@ -68,7 +68,7 @@ void ThrusterRpmWidget::paintEvent(QPaintEvent *event)
     Q_UNUSED(event)
 
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHint(QPainter::Antialiasing); //抗锯齿
     painter.fillRect(rect(), Qt::white);
 
     const double baseWidth = 800.0;
