@@ -24,5 +24,5 @@ protoc -I../ --c_out=. ../*.proto
 ```bash
 # 在 proto/mcu 目录执行
 mkdir -p proto
-protoc -I. --cpp_out=./proto ./*.proto
+protoc -I../ --cpp_out=. ../*.proto
 ```

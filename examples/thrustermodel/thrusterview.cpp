@@ -10,7 +10,7 @@
 #include <QFrame>
 #include <QSizePolicy>
 
-#include "msg_thruster.pb.h"
+#include "thruster.pb.h"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 公共样式常量
@@ -78,8 +78,8 @@ static const QString kBarStylePower =
 static QVariantMap sampleData(int seq)
 {
     const uint32_t st = (seq % 5 == 0)
-                            ? static_cast<uint32_t>(thruster::NORMAL | thruster::CHARGING)
-                            : static_cast<uint32_t>(thruster::NORMAL);
+                            ? static_cast<uint32_t>(mcu::thruster::NORMAL | mcu::thruster::CHARGING)
+                            : static_cast<uint32_t>(mcu::thruster::NORMAL);
     return {
         { "status",       st },
         { "errorCode",    static_cast<uint>(seq % 3) },
@@ -250,8 +250,8 @@ void ThrusterCardWidget::applyStatusBadge(QLabel *lbl,
                                            const QString &statusText,
                                            uint status)
 {
-    const bool isNormal  = (status == thruster::NORMAL);
-    const bool isCharging = (status == static_cast<uint>(thruster::NORMAL | thruster::CHARGING));
+    const bool isNormal  = (status == static_cast<uint>(mcu::thruster::NORMAL));
+    const bool isCharging = (status == static_cast<uint>(mcu::thruster::NORMAL | mcu::thruster::CHARGING));
 
     if (isNormal || isCharging) {
         lbl->setText(isCharging ? "⚡ Charging" : "● Normal");

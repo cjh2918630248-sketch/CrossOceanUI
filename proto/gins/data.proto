@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package gins.data;
+
+import "gins/port.proto";
+
+option go_package = "crossocean.com/edge_gateway/pb/gins/data";
+
+// GINS 导航数据帧
+message OutMsg {
+  gins.port.Gins udp_port     = 1; // UDP传输端口号
+  int64          timestamp_ms = 2; // 时间戳，单位毫秒
+
+  int32  utc_local100 = 3;  // utc本地时间(0.01 s)
+  int32  latitude1e7  = 4;  // 纬度(1e7 deg)
+  int32  longitude1e7 = 5;  // 经度(1e7 deg)
+  int32  altitude100  = 6;  // 海拔(0.001 m)
+  int32  roll10       = 7;  // 横滚角(0.1 deg)
+  int32  pitch10      = 8;  // 俯仰角(0.1 deg)
+  int32  heading100   = 9;  // 航向角(0.01 deg)
+  int32  vn_mps100    = 10; // 北向速度(0.01 m/s)
+  int32  ve_mps100    = 11; // 东向速度(0.01 m/s)
+  int32  roti100      = 12; // 旋转速率(0.01 deg/s)
+  int32  ax100        = 13; // 机体加速度(0.01 m/s²)
+  int32  ay100        = 14; // 机体加速度(0.01 m/s²)
+  int32  aaz100       = 15; // 机体加速度(0.01 m/s²)
+  uint32 gins_status  = 16; // GINS状态字
+  uint32 hdop10       = 17; // hdop(0.1)
+  int32  head_std100  = 18; // 航向标准差(0.01 deg)
+}

@@ -23,14 +23,16 @@ FORMS += \
 
 LIBS += -lprotobuf
 
-include($$PWD/../../proto/mcu/proto/proto.pri)
+include($$PWD/../../proto/gins/proto/proto.pri)
 
 #指定编译生成的可执行文件放到根目录下的bin目录
 !android:!ios {
 DESTDIR = $$PWD/../../bin/examples/protobuf/protobufmodel
 }
 
-MOC_DIR     = temp/moc
-RCC_DIR     = temp/rcc
-UI_DIR      = temp/ui
-OBJECTS_DIR = temp/obj
+# 使用 OUT_PWD，避免影子构建/非源码目录执行 qmake 时 temp/ui 与依赖路径不一致
+#（例如依赖写成 ../../temp/ui/ui_mainwidget.h 却无对应规则）
+MOC_DIR     = $$OUT_PWD/temp/moc
+RCC_DIR     = $$OUT_PWD/temp/rcc
+UI_DIR      = $$OUT_PWD/temp/ui
+OBJECTS_DIR = $$OUT_PWD/temp/obj

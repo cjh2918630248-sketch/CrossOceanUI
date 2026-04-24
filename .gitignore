@@ -58,6 +58,9 @@ compile_commands.json
 bin/
 deploy/
 
+# 本机 Qt 路径软链接（由 3rdparty/qtmqtt/setup_symlinks.sh 生成）
+3rdparty/qtmqtt/install/
+
 #.vscode & .trae
 **/**/.vscode/
 **/**/.trae/

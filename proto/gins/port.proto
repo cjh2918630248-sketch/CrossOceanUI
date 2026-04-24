@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package gins.port;
+
+option go_package = "crossocean.com/edge_gateway/pb/gins/port";
+
+// 各消息通道对应的 UDP 端口号
+enum Gins {
+  GINS_UNKNOWN = 0; // 未知 / 无效
+
+  DATA = 20628; // 导航数据 UDP 端口
+}

@@ -8,20 +8,23 @@ ThrusterDataModel::ThrusterDataModel(QObject *parent)
 
 /* ---------------------------------- 字段读取 ---------------------------------- */
 
-uint    ThrusterDataModel::status()       const { return m_data.status();        }
-uint    ThrusterDataModel::errorCode()    const { return m_data.error_code();    }
-int     ThrusterDataModel::rpm()          const { return m_data.rpm();           }
-int     ThrusterDataModel::angle()        const { return m_data.angle();         }
-int     ThrusterDataModel::power()        const { return m_data.power();         }
-uint    ThrusterDataModel::busVoltage()   const { return m_data.bus_voltage();   }
-int     ThrusterDataModel::busCurrent()   const { return m_data.bus_current();   }
-int     ThrusterDataModel::phaseCurrent() const { return m_data.phase_current(); }
-int     ThrusterDataModel::motorTemp()    const { return m_data.motor_temp();    }
-int     ThrusterDataModel::mosTemp()      const { return m_data.mos_temp();      }
-int     ThrusterDataModel::temp()         const { return m_data._temp();         }
-uint    ThrusterDataModel::runTime()      const { return m_data.run_time();      }
-uint    ThrusterDataModel::sumRunTime()   const { return m_data.sum_run_time();  }
-QString ThrusterDataModel::statusText()   const { return statusToString(m_data.status()); }
+uint ThrusterDataModel::status() const { return m_data.status(); }
+uint ThrusterDataModel::errorCode() const { return m_data.error_code(); }
+int  ThrusterDataModel::rpm() const { return static_cast<int>(m_data.rpm()); }
+int  ThrusterDataModel::angle() const { return static_cast<int>(qRound64(m_data.angle10() / 10.0)); }
+int  ThrusterDataModel::power() const { return static_cast<int>(m_data.power100() * 10); }
+uint ThrusterDataModel::busVoltage() const
+{
+    return static_cast<uint>((m_data.bus_voltage10() + 5) / 10);
+}
+int ThrusterDataModel::busCurrent() const { return m_data.bus_current10() / 10; }
+int ThrusterDataModel::phaseCurrent() const { return m_data.phase_current10() / 10; }
+int ThrusterDataModel::motorTemp() const { return static_cast<int>(m_data.motor_temp()); }
+int ThrusterDataModel::mosTemp() const { return static_cast<int>(m_data.mos_temp()); }
+int ThrusterDataModel::temp() const { return static_cast<int>(m_data.power_temp()); }
+uint ThrusterDataModel::runTime() const { return m_data.run_time(); }
+uint ThrusterDataModel::sumRunTime() const { return m_data.sum_run_time(); }
+QString ThrusterDataModel::statusText() const { return statusToString(m_data.status()); }
 
 /* ---------------------------------- 字段写入 ---------------------------------- */
 
@@ -51,40 +54,45 @@ void ThrusterDataModel::setRpm(int val)
 
 void ThrusterDataModel::setAngle(int val)
 {
-    if (m_data.angle() == val) return;
-    m_data.set_angle(val);
+    const int32_t scaled = static_cast<int32_t>(qRound64(static_cast<double>(val) * 10.0));
+    if (m_data.angle10() == scaled) return;
+    m_data.set_angle10(scaled);
     emit angleChanged();
     emit dataUpdated();
 }
 
 void ThrusterDataModel::setPower(int val)
 {
-    if (m_data.power() == val) return;
-    m_data.set_power(val);
+    const int32_t scaled = static_cast<int32_t>(qRound64(static_cast<double>(val) / 10.0));
+    if (m_data.power100() == scaled) return;
+    m_data.set_power100(scaled);
     emit powerChanged();
     emit dataUpdated();
 }
 
 void ThrusterDataModel::setBusVoltage(uint val)
 {
-    if (m_data.bus_voltage() == val) return;
-    m_data.set_bus_voltage(val);
+    const uint32_t scaled = val * 10u;
+    if (m_data.bus_voltage10() == scaled) return;
+    m_data.set_bus_voltage10(scaled);
     emit busVoltageChanged();
     emit dataUpdated();
 }
 
 void ThrusterDataModel::setBusCurrent(int val)
 {
-    if (m_data.bus_current() == val) return;
-    m_data.set_bus_current(val);
+    const int32_t scaled = val * 10;
+    if (m_data.bus_current10() == scaled) return;
+    m_data.set_bus_current10(scaled);
     emit busCurrentChanged();
     emit dataUpdated();
 }
 
 void ThrusterDataModel::setPhaseCurrent(int val)
 {
-    if (m_data.phase_current() == val) return;
-    m_data.set_phase_current(val);
+    const int32_t scaled = val * 10;
+    if (m_data.phase_current10() == scaled) return;
+    m_data.set_phase_current10(scaled);
     emit phaseCurrentChanged();
     emit dataUpdated();
 }
@@ -107,8 +115,8 @@ void ThrusterDataModel::setMosTemp(int val)
 
 void ThrusterDataModel::setTemp(int val)
 {
-    if (m_data._temp() == val) return;
-    m_data.set__temp(val);
+    if (m_data.power_temp() == val) return;
+    m_data.set_power_temp(val);
     emit tempChanged();
     emit dataUpdated();
 }
@@ -134,20 +142,20 @@ void ThrusterDataModel::setSumRunTime(uint val)
 QVariantMap ThrusterDataModel::toMap() const
 {
     return {
-        { "status",        m_data.status()        },
-        { "errorCode",     m_data.error_code()    },
-        { "rpm",           m_data.rpm()           },
-        { "angle",         m_data.angle()         },
-        { "power",         m_data.power()         },
-        { "busVoltage",    m_data.bus_voltage()   },
-        { "busCurrent",    m_data.bus_current()   },
-        { "phaseCurrent",  m_data.phase_current() },
-        { "motorTemp",     m_data.motor_temp()    },
-        { "mosTemp",       m_data.mos_temp()      },
-        { "temp",          m_data._temp()         },
-        { "runTime",       m_data.run_time()      },
-        { "sumRunTime",    m_data.sum_run_time()  },
-        { "statusText",    statusToString(m_data.status()) },
+        { "status",       m_data.status()        },
+        { "errorCode",    m_data.error_code()    },
+        { "rpm",          static_cast<int>(m_data.rpm()) },
+        { "angle",        angle()                },
+        { "power",        power()                },
+        { "busVoltage",   busVoltage()           },
+        { "busCurrent",   busCurrent()           },
+        { "phaseCurrent", phaseCurrent()         },
+        { "motorTemp",    motorTemp()            },
+        { "mosTemp",      mosTemp()              },
+        { "temp",         temp()                 },
+        { "runTime",      m_data.run_time()      },
+        { "sumRunTime",   m_data.sum_run_time()  },
+        { "statusText",   statusToString(m_data.status()) },
     };
 }
 
@@ -170,7 +178,7 @@ void ThrusterDataModel::fromMap(const QVariantMap &map)
 
 /* ---------------------------------- Proto 直接操作 ---------------------------------- */
 
-void ThrusterDataModel::loadFromProto(const thruster::Data &data)
+void ThrusterDataModel::loadFromProto(const mcu::thruster::Data &data)
 {
     m_data = data;
 
@@ -190,7 +198,7 @@ void ThrusterDataModel::loadFromProto(const thruster::Data &data)
     emit dataUpdated();
 }
 
-void ThrusterDataModel::exportToProto(thruster::Data &out) const
+void ThrusterDataModel::exportToProto(mcu::thruster::Data &out) const
 {
     out = m_data;
 }
@@ -210,7 +218,7 @@ QByteArray ThrusterDataModel::serialize() const
 
 bool ThrusterDataModel::deserialize(const QByteArray &bytes)
 {
-    thruster::Data d;
+    mcu::thruster::Data d;
     if (!d.ParseFromArray(bytes.constData(), bytes.size())) {
         emit errorOccurred(DeserializeError,
                            QStringLiteral("反序列化失败，数据格式不正确"));
@@ -223,7 +231,7 @@ bool ThrusterDataModel::deserialize(const QByteArray &bytes)
 /* ---------------------------------- 元信息 ---------------------------------- */
 
 uint ThrusterDataModel::port() const        { return m_port;        }
-uint ThrusterDataModel::thrusterNum() const  { return m_thrusterNum; }
+uint ThrusterDataModel::thrusterNum() const { return m_thrusterNum; }
 
 void ThrusterDataModel::setPort(uint port)
 {
@@ -243,23 +251,23 @@ void ThrusterDataModel::setThrusterNum(uint num)
 
 QString ThrusterDataModel::statusToString(uint32_t status)
 {
-    if (status == thruster::NORMAL)
+    if (status == static_cast<uint32_t>(mcu::thruster::NORMAL))
         return QStringLiteral("Normal");
 
     QStringList flags;
-    if (status & thruster::STALL)            flags << QStringLiteral("Stall");
-    if (status & thruster::MOTOR_OVERHEAT)   flags << QStringLiteral("MotorOverheat");
-    if (status & thruster::MOS_OVERHEAT)     flags << QStringLiteral("MosOverheat");
-    if (status & thruster::OVER_CURRENT)     flags << QStringLiteral("OverCurrent");
-    if (status & thruster::COMM_FAULT)       flags << QStringLiteral("CommFault");
-    if (status & thruster::MOTOR_TEMP_ERROR) flags << QStringLiteral("MotorTempErr");
-    if (status & thruster::MOS_TEMP_ALARM)   flags << QStringLiteral("MosTempAlarm");
-    if (status & thruster::OVER_VOLTAGE)     flags << QStringLiteral("OverVoltage");
-    if (status & thruster::UNDER_VOLTAGE)    flags << QStringLiteral("UnderVoltage");
-    if (status & thruster::CIRCUIT_FAULT)    flags << QStringLiteral("CircuitFault");
-    if (status & thruster::CHARGING)         flags << QStringLiteral("Charging");
-    if (status & thruster::FAN_FAULT)        flags << QStringLiteral("FanFault");
-    if (status & thruster::OTHER)            flags << QStringLiteral("Other");
+    if (status & mcu::thruster::STALL)            flags << QStringLiteral("Stall");
+    if (status & mcu::thruster::MOTOR_OVERHEAT)   flags << QStringLiteral("MotorOverheat");
+    if (status & mcu::thruster::MOS_OVERHEAT)     flags << QStringLiteral("MosOverheat");
+    if (status & mcu::thruster::OVER_CURRENT)     flags << QStringLiteral("OverCurrent");
+    if (status & mcu::thruster::COMM_FAULT)       flags << QStringLiteral("CommFault");
+    if (status & mcu::thruster::MOTOR_TEMP_ERROR) flags << QStringLiteral("MotorTempErr");
+    if (status & mcu::thruster::MOS_TEMP_ALARM)   flags << QStringLiteral("MosTempAlarm");
+    if (status & mcu::thruster::OVER_VOLTAGE)     flags << QStringLiteral("OverVoltage");
+    if (status & mcu::thruster::UNDER_VOLTAGE)    flags << QStringLiteral("UnderVoltage");
+    if (status & mcu::thruster::CIRCUIT_FAULT)    flags << QStringLiteral("CircuitFault");
+    if (status & mcu::thruster::CHARGING)         flags << QStringLiteral("Charging");
+    if (status & mcu::thruster::FAN_FAULT)        flags << QStringLiteral("FanFault");
+    if (status & mcu::thruster::OTHER)            flags << QStringLiteral("Other");
 
     return flags.isEmpty()
                ? QStringLiteral("Unknown(0x%1)").arg(status, 0, 16)
@@ -270,21 +278,22 @@ void ThrusterDataModel::printData() const
 {
     qInfo().noquote()
         << QStringLiteral("ThrusterDataModel (port=%1, num=%2):"
-                          "\n  rpm=%3 angle=%4 power=%5W"
-                          "\n  busV=%6 busCur=%7 phaseCur=%8"
-                          "\n  motorTemp=%9°C mosTemp=%10°C"
-                          "\n  status=%11 errorCode=%12"
-                          "\n  runTime=%13 sumRunTime=%14")
+                          "\n  rpm=%3 angle=%4° power=%5W"
+                          "\n  busV=%6V busCur=%7A phaseCur=%8A"
+                          "\n  motorTemp=%9°C mosTemp=%10°C powerTemp=%11°C"
+                          "\n  status=%12 errorCode=%13"
+                          "\n  runTime=%14 sumRunTime=%15")
                .arg(m_port)
                .arg(m_thrusterNum)
                .arg(m_data.rpm())
-               .arg(m_data.angle())
-               .arg(m_data.power())
-               .arg(m_data.bus_voltage())
-               .arg(m_data.bus_current())
-               .arg(m_data.phase_current())
+               .arg(m_data.angle10() / 10.0, 0, 'f', 1)
+               .arg(m_data.power100() * 10)
+               .arg(m_data.bus_voltage10() / 10.0, 0, 'f', 1)
+               .arg(m_data.bus_current10() / 10.0, 0, 'f', 1)
+               .arg(m_data.phase_current10() / 10.0, 0, 'f', 1)
                .arg(m_data.motor_temp())
                .arg(m_data.mos_temp())
+               .arg(m_data.power_temp())
                .arg(statusToString(m_data.status()))
                .arg(m_data.error_code())
                .arg(m_data.run_time())

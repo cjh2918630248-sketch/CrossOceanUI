@@ -3,10 +3,10 @@
 
 #include <QObject>
 #include <QVariantMap>
-#include "msg_gins_data.pb.h"
+#include "data.pb.h"
 
 // 单条船 GINS 数据模型：
-// - 内部存储一个 protobuf GINSData；
+// - 内部存储一个 protobuf gins::data::OutMsg；
 // - 每个字段暴露为 Q_PROPERTY，支持 QWidget/QML 绑定；
 // - 提供 QVariantMap 接口与序列化/反序列化能力。
 class GinsDataModel : public QObject {
@@ -85,8 +85,8 @@ public:
     Q_INVOKABLE void fromMap(const QVariantMap &map);
 
     /* ---------- Proto 接口 ---------- */
-    void setProto(const gins::data::GINSData &data);
-    gins::data::GINSData proto() const;
+    void setProto(const gins::data::OutMsg &data);
+    gins::data::OutMsg proto() const;
 
     /* ---------- 序列化 ---------- */
     Q_INVOKABLE QByteArray serialize() const;
@@ -121,10 +121,10 @@ signals:
     void errorOccurred(int errorType, const QString &errorMessage);
 
 private:
-    static QVariantMap protoToMap(const gins::data::GINSData &d);
-    static void mapToProto(const QVariantMap &map, gins::data::GINSData &d);
+    static QVariantMap protoToMap(const gins::data::OutMsg &d);
+    static void mapToProto(const QVariantMap &map, gins::data::OutMsg &d);
 
-    gins::data::GINSData m_data;
+    gins::data::OutMsg m_data;
 };
 
 #endif // GINSDATAMODEL_H
