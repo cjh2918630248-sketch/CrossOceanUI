@@ -3,10 +3,10 @@
 
 #include <QObject>
 #include <QVariantMap>
-#include "msg_thruster.pb.h"
+#include "thruster.pb.h"
 
 // 单个推进器数据模型：
-// - 内部存储一条 protobuf thruster::Data；
+// - 内部存储一条 protobuf mcu::thruster::Data；
 // - 附带 port / thruster_num 元信息；
 // - 每个字段对外暴露 Q_PROPERTY，方便 QWidget/QML 绑定；
 // - 提供序列化/反序列化与 QVariantMap 互转能力。
@@ -79,8 +79,8 @@ public:
     Q_INVOKABLE void fromMap(const QVariantMap &map);
 
     /* ---- Proto 直接操作 ---- */
-    void loadFromProto(const thruster::Data &data);
-    void exportToProto(thruster::Data &out) const;
+    void loadFromProto(const mcu::thruster::Data &data);
+    void exportToProto(mcu::thruster::Data &out) const;
 
     /* ---- 序列化 ---- */
     Q_INVOKABLE QByteArray serialize() const;
@@ -116,7 +116,7 @@ signals:
     void errorOccurred(int errorType, const QString &errorMessage);
 
 private:
-    thruster::Data m_data;
+    mcu::thruster::Data m_data;
     uint32_t m_port        = 0;
     uint32_t m_thrusterNum = 0;
 };

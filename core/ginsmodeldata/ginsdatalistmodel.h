@@ -3,10 +3,10 @@
 
 #include <QAbstractListModel>
 #include <QVariantMap>
-#include "msg_gins_data.pb.h"
+#include "data.pb.h"
 
 // QAbstractListModel 封装：
-// - 内部存储 protobuf 的 GINSData；
+// - 内部存储 protobuf 的 gins::data::OutMsg；
 // - 对外提供 QVariantMap 接口，方便 QWidget/QML 使用；
 // - 同时提供序列化/反序列化能力，便于网络传输或存储。
 class GinsDataListModel : public QAbstractListModel {
@@ -74,9 +74,9 @@ public:
     Q_INVOKABLE bool deserializeAndUpdate(int index, const QByteArray &bytes);
 
     /* 批量操作 */
-    void appendProto(const gins::data::GINSData &data);
-    void updateProto(int index, const gins::data::GINSData &data);
-    bool protoData(int index, gins::data::GINSData &out) const;
+    void appendProto(const gins::data::OutMsg &data);
+    void updateProto(int index, const gins::data::OutMsg &data);
+    bool protoData(int index, gins::data::OutMsg &out) const;
 
 signals:
     void countChanged();
@@ -92,12 +92,10 @@ protected:
 
 private:
     // map/proto 双向转换：
-    // - mapToProto: UI 输入 -> protobuf（含单位缩放）；
-    // - protoToMap: protobuf -> UI 友好值（恢复真实单位）。
-    static QVariantMap protoToMap(const gins::data::GINSData &d);
-    static void mapToProto(const QVariantMap &map, gins::data::GINSData &d);
+    static QVariantMap protoToMap(const gins::data::OutMsg &d);
+    static void mapToProto(const QVariantMap &map, gins::data::OutMsg &d);
 
-    QList<gins::data::GINSData> m_list;
+    QList<gins::data::OutMsg> m_list;
 };
 
 #endif // GINSDATALISTMODEL_H

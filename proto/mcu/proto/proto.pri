@@ -1,19 +1,21 @@
 !defined(PROTO_PRI_INCLUDED, var) {
 PROTO_PRI_INCLUDED = 1
 
-# proto
+# mcu protobuf 生成物位于 $$PWD/mcu/（与 protoc 中 import "mcu/..." 一致）
+# - $$PWD：解析生成代码里的 #include "mcu/xxx.pb.h"
+# - $$PWD/mcu：业务代码可继续 #include "thruster.pb.h" 等短路径
 
-#将当前目录加入到头文件路径
 INCLUDEPATH += $$PWD
+INCLUDEPATH += $$PWD/mcu
 
 SOURCES += \
-    $$PWD/msg_gins_data.pb.cc \
-    $$PWD/msg_battery.pb.cc \
-    $$PWD/msg_thruster.pb.cc
+    $$PWD/mcu/port.pb.cc \
+    $$PWD/mcu/battery.pb.cc \
+    $$PWD/mcu/thruster.pb.cc
 
 HEADERS += \
-    $$PWD/msg_gins_data.pb.h \
-    $$PWD/msg_battery.pb.h \
-    $$PWD/msg_thruster.pb.h
+    $$PWD/mcu/port.pb.h \
+    $$PWD/mcu/battery.pb.h \
+    $$PWD/mcu/thruster.pb.h
 
 }

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package mcu.port;
+
+option go_package = "crossocean.com/edge_gateway/pb/mcu/port";
+
+// MCU 各消息通道对应的 UDP 端口号
+enum Mcu {
+  MCU_UNKNOWN = 0; // 未知 / 无效
+
+  BATTERY  = 20629; // 电池数据 UDP 端口
+  THRUSTER = 20630; // 推进器数据 UDP 端口
+  SBUS     = 20631; // sbus数据 UDP 端口
+  STATE    = 20632; // 主控状态数据 UDP 端口
+}

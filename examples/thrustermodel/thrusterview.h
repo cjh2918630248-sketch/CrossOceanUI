@@ -13,7 +13,7 @@ class ThrusterDataModel;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ThrusterCardWidget
-//   单台推进器的数据展示卡片，显示所有 thruster::Data 字段。
+//   单台推进器的数据展示卡片，显示所有 mcu::thruster::Data 对应展示字段。
 //   通过 updateData(QVariantMap) / reset() 刷新界面。
 // ─────────────────────────────────────────────────────────────────────────────
 class ThrusterCardWidget : public QGroupBox
