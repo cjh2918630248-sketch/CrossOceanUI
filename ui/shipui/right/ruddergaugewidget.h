@@ -19,7 +19,7 @@
  * 大刻度（每 10°）+ 数字显示在弧线外侧上方；小刻度（每 1°/5°）向弧心方向内画。
  *
  * 黄色小三角（#FFBF00）固定在弧线顶点，尖端朝上始终指向当前刻度，不随航向移动。
- * Roll、Pitch、Heading 数值显示在弧线上方可视区域。
+ * Roll、Pitch、Heading：数值在上方、英文列标题在下方，位于弧内下方可视区。
  */
 class RudderGaugeWidget : public QWidget
 {
@@ -32,14 +32,16 @@ public:
     void setRoll(double degrees);
     /// 设置俯仰角（一位小数显示）
     void setPitch(double degrees);
+    void setNightMode(bool night);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
-    double m_heading = 0.0;
-    double m_roll    = 0.0;
-    double m_pitch   = 0.0;
+    double m_heading   = 0.0;
+    double m_roll      = 0.0;
+    double m_pitch     = 0.0;
+    bool   m_nightMode = true;
 };
 
 #endif // RUDDERGAUGEWIDGET_H

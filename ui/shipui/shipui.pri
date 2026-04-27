@@ -5,6 +5,7 @@
 INCLUDEPATH += $$PWD
 
 SOURCES += \
+    $$PWD/main/icondye.cpp \
     $$PWD/main/shipuiwidget.cpp \
     $$PWD/left/leftwidget.cpp \
     $$PWD/top/topwidget.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
     $$PWD/main/scaledview.cpp
 
 HEADERS += \
+    $$PWD/main/icondye.h \
     $$PWD/main/shipuiwidget.h \
     $$PWD/left/leftwidget.h \
     $$PWD/top//topwidget.h \

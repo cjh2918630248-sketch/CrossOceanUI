@@ -66,6 +66,7 @@ public:
     void setNavInfo(const NavInfo &info);
     /// 船速表满量程 (m/s)，与 SpeedInfo.speedMps 独立设置
     void setMaxSpeedMps(double maxSpeedMps);
+    void setAppNightMode(bool isNight);
 
 signals:
     void modeSwitchButtonClicked();

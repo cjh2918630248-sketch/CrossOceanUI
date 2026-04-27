@@ -19,6 +19,9 @@ class ClockToolbar : public QWidget
 public:
     explicit ClockToolbar(QWidget *parent = nullptr);
 
+    /// 顶栏三枚圆钮：夜间下带描边与着色；日间下恢复默认 SVG。
+    void setAppNightMode(bool isNight);
+
     QLabel *clockLabel() const { return m_clockLabel; }
     QPushButton *nightThemeButton() const { return m_nightThemeButton; }
     QPushButton *dayThemeButton() const { return m_dayThemeButton; }
@@ -38,6 +41,9 @@ private slots:
 private:
     void setupUi();
     void setupConnections();
+    void refreshClockToolbarVisuals();
+
+    bool m_appNightMode = true;
 
     QLabel *m_clockLabel = nullptr;
     QPushButton *m_nightThemeButton = nullptr;

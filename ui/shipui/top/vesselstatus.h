@@ -26,6 +26,7 @@ public:
     QPushButton *stopButton() const { return m_stopButton; }
     QPushButton *controllerButton() const { return m_controllerButton; }
     void setBatteryPercent(int percent);
+    void setAppNightMode(bool isNight);
 
 signals:
     void rcButtonClicked();

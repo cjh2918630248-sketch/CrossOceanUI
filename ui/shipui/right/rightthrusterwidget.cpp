@@ -52,6 +52,12 @@ void ThrusterRpmBarWidget::setRpm(int rpm)
     update();
 }
 
+void ThrusterRpmBarWidget::setNightMode(bool night)
+{
+    m_nightMode = night;
+    update();
+}
+
 void ThrusterRpmBarWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
@@ -69,8 +75,11 @@ void ThrusterRpmBarWidget::paintEvent(QPaintEvent *event)
     }
     ratio = std::clamp(ratio, 0.0, 1.0);
 
+    const QColor barFill   = m_nightMode ? QColor(0xFF, 0xFF, 0xFF)       : QColor(0x5B, 0x73, 0xAB);
+    const QColor barBorder = m_nightMode ? QColor(255, 255, 255, 0x80)    : QColor(91, 115, 171, 0x80);
+
     const QRectF outer(0, 0, kBarW, kBarH);
-    p.setPen(QPen(QColor(255, 255, 255, 0x80), kBorderPx));
+    p.setPen(QPen(barBorder, kBorderPx));
     p.setBrush(Qt::NoBrush);
     p.drawRoundedRect(outer, kRadius, kRadius);
 
@@ -87,10 +96,10 @@ void ThrusterRpmBarWidget::paintEvent(QPaintEvent *event)
 
     if (r >= 0 && ratio > 0.0) {
         const double fillH = (centerY - inner.top()) * ratio;
-        p.fillRect(QRectF(fillX, centerY - fillH, fillW, fillH), QColor(QStringLiteral("#FFFFFF")));
+        p.fillRect(QRectF(fillX, centerY - fillH, fillW, fillH), barFill);
     } else if (r < 0 && ratio > 0.0) {
         const double fillH = (inner.bottom() - centerY) * ratio;
-        p.fillRect(QRectF(fillX, centerY, fillW, fillH), QColor(QStringLiteral("#FFFFFF")));
+        p.fillRect(QRectF(fillX, centerY, fillW, fillH), barFill);
     }
     p.restore();
 
@@ -197,4 +206,10 @@ void RightThrusterRpmPairWidget::setRightRpm(int rpm)
     if (m_rightBar) {
         m_rightBar->setRpm(rpm);
     }
+}
+
+void RightThrusterRpmPairWidget::setNightMode(bool night)
+{
+    if (m_leftBar)  m_leftBar->setNightMode(night);
+    if (m_rightBar) m_rightBar->setNightMode(night);
 }

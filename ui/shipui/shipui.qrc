@@ -1,5 +1,17 @@
 <RCC>
     <qresource prefix="/">
-        <file>src/logo.png</file>
+        <file>src/船体.png</file>
+        <file>src/bell.fill 1.svg</file>
+        <file>src/camera.svg</file>
+        <file>src/chart.svg</file>
+        <file>src/docking.svg</file>
+        <file>src/ferry.svg</file>
+        <file>src/home.svg</file>
+        <file>src/map.svg</file>
+        <file>src/moon.fill 2.svg</file>
+        <file>src/setting.svg</file>
+        <file>src/sun.max.fill 1.svg</file>
+        <file>src/2.svg</file>
+        <file>src/logo.svg</file>
     </qresource>
 </RCC>

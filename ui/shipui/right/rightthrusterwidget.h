@@ -16,12 +16,14 @@ public:
     explicit ThrusterRpmBarWidget(QWidget *parent = nullptr);
 
     void setRpm(int rpm);
+    void setNightMode(bool night);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
-    int m_rpm = 0;
+    int  m_rpm       = 0;
+    bool m_nightMode = true;
 };
 
 /// 模块 2：左列「LEFT / 数值 / RPM」、中间双柱水平、右列「RIGHT / 数值 / RPM」
@@ -32,6 +34,7 @@ public:
 
     void setLeftRpm(int rpm);
     void setRightRpm(int rpm);
+    void setNightMode(bool night);
 
 private:
     QLabel *m_leftTitleLabel   = nullptr;

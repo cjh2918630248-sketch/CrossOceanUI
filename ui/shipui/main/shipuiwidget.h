@@ -47,7 +47,7 @@ signals:
     void homeButtonClicked();
     void mapButtonClicked();
     void shipButtonClicked();
-    void chartButtonClicked();
+    void dockingButtonClicked();
     void cameraButtonClicked();
     void settingButtonClicked();
 
@@ -81,6 +81,7 @@ private:
     void buildUi();
     void setupConnections();
     void applyTheme();
+    void setAppNightMode(bool isNight);
 
     LeftWidget  *m_leftWidget  = nullptr;
     TopWidget   *m_topWidget   = nullptr;

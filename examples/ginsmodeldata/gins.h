@@ -12,15 +12,16 @@ public:
     GinsModel() = default;
 
     // 从各传感器字段构造一条 OutMsg（展示层单位与 GinsDataModel 一致）。
-    // roll_deg10 / pitch_deg10 单位为 0.1°；vn_mps100 / ve_mps100 单位为 0.01 m/s；hdop10 单位为 0.1。
+    // roll_deg100 / pitch_deg100 单位为 0.01°；vn_mps100 / ve_mps100 单位为 0.01 m/s；hdop10 单位为 0.1。
     GinsModel(uint32_t port,
               double   utc_local,
               double   latitude,
               double   longitude,
               float    altitude,
-              int32_t  roll_deg10,
-              int32_t  pitch_deg10,
+              int32_t  roll_deg100,
+              int32_t  pitch_deg100,
               float    heading_deg,
+              float    course_deg,
               int32_t  vn_mps100,
               int32_t  ve_mps100,
               float    roti,
@@ -35,19 +36,20 @@ public:
         m_data.set_utc_local100(static_cast<int32_t>(utc_local * 100.0));
         m_data.set_latitude1e7(static_cast<int32_t>(latitude * 1e7));
         m_data.set_longitude1e7(static_cast<int32_t>(longitude * 1e7));
-        m_data.set_altitude100(static_cast<int32_t>(altitude * 1000.0f));
-        m_data.set_roll10(roll_deg10);
-        m_data.set_pitch10(pitch_deg10);
-        m_data.set_heading100(static_cast<int32_t>(heading_deg * 100.0f));
+        m_data.set_altitude1e3(static_cast<int32_t>(altitude * 1000.0f));
+        m_data.set_roll100(roll_deg100);
+        m_data.set_pitch100(pitch_deg100);
+        m_data.set_heading100(static_cast<uint32_t>(heading_deg * 100.0f));
+        m_data.set_course100(static_cast<uint32_t>(course_deg * 100.0f));
         m_data.set_vn_mps100(vn_mps100);
         m_data.set_ve_mps100(ve_mps100);
-        m_data.set_roti100(static_cast<int32_t>(roti * 100.0f));
-        m_data.set_ax100(static_cast<int32_t>(ax * 100.0f));
-        m_data.set_ay100(static_cast<int32_t>(ay * 100.0f));
-        m_data.set_aaz100(static_cast<int32_t>(aaz * 100.0f));
+        m_data.set_roti1e5(static_cast<int32_t>(roti * 1e5f));
+        m_data.set_ax1e5(static_cast<int32_t>(ax * 1e5f));
+        m_data.set_ay1e5(static_cast<int32_t>(ay * 1e5f));
+        m_data.set_aaz1e5(static_cast<int32_t>(aaz * 1e5f));
         m_data.set_gins_status(gins_status);
         m_data.set_hdop10(hdop10);
-        m_data.set_head_std100(static_cast<int32_t>(head_std * 100.0f));
+        m_data.set_head_std1e5(static_cast<int32_t>(head_std * 1e5f));
     }
 
     // 从已有的 OutMsg 构造（拷贝）。
@@ -60,26 +62,27 @@ public:
     double   utcLocal()    const { return m_data.utc_local100() / 100.0; }
     double   latitude()    const { return m_data.latitude1e7() / 1e7; }
     double   longitude()   const { return m_data.longitude1e7() / 1e7; }
-    float    altitude()    const { return m_data.altitude100() / 1000.0f; }
+    float    altitude()    const { return m_data.altitude1e3() / 1000.0f; }
 
-    // roll / pitch 以 0.1° 为单位存储，此处转换为度
-    double   rollDeg()     const { return m_data.roll10()  / 10.0; }
-    double   pitchDeg()    const { return m_data.pitch10() / 10.0; }
+    // roll / pitch 以 0.01° 为单位存储，此处转换为度
+    double   rollDeg()     const { return m_data.roll100()  / 100.0; }
+    double   pitchDeg()    const { return m_data.pitch100() / 100.0; }
     float    headingDeg()  const { return m_data.heading100() / 100.0f; }
+    float    courseDeg()   const { return m_data.course100() / 100.0f; }
 
     // 北向 / 东向速度以 0.01 m/s 为单位存储，此处转换为 m/s
     double   vnMps()       const { return m_data.vn_mps100() / 100.0; }
     double   veMps()       const { return m_data.ve_mps100() / 100.0; }
 
-    float    roti()        const { return m_data.roti100() / 100.0f; }
-    float    ax()          const { return m_data.ax100() / 100.0f; }
-    float    ay()          const { return m_data.ay100() / 100.0f; }
-    float    aaz()         const { return m_data.aaz100() / 100.0f; }
+    float    roti()        const { return m_data.roti1e5() / 1e5f; }
+    float    ax()          const { return m_data.ax1e5() / 1e5f; }
+    float    ay()          const { return m_data.ay1e5() / 1e5f; }
+    float    aaz()         const { return m_data.aaz1e5() / 1e5f; }
     uint32_t ginsStatus()  const { return m_data.gins_status(); }
 
     // HDOP 以 0.1 为单位存储，此处转换为实际值
     double   hdop()        const { return m_data.hdop10() / 10.0; }
-    float    headStd()     const { return m_data.head_std100() / 100.0f; }
+    float    headStd()     const { return m_data.head_std1e5() / 1e5f; }
 
     // ---------------------------------------------------------------
     // 序列化：将消息编码为二进制字节串

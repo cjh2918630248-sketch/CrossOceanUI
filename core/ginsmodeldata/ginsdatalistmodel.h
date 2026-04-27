@@ -26,6 +26,7 @@ public:
         RollDegRole,
         PitchDegRole,
         HeadingDegRole,
+        CourseDegRole,
         VnMpsRole,
         VeMpsRole,
         RotiRole,

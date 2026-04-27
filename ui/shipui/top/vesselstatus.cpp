@@ -203,3 +203,17 @@ void VesselStatus::updateBatteryDisplay()
         m_batteryIndicator->setPixmap(makeBatteryPixmap(m_batteryPercent));
     }
 }
+
+void VesselStatus::setAppNightMode(bool isNight)
+{
+    const QString btnStyle   = isNight ? QString() : QStringLiteral("QPushButton#actionButton{color:#000000;}");
+    const QString labelStyle = isNight ? QString() : QStringLiteral("color:#000000;");
+    for (auto *b : {m_rcButton, m_mcButton, m_autoModeButton, m_stopButton, m_controllerButton}) {
+        if (b) {
+            b->setStyleSheet(btnStyle);
+        }
+    }
+    if (m_batteryPercentLabel) {
+        m_batteryPercentLabel->setStyleSheet(labelStyle);
+    }
+}

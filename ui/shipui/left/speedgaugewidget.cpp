@@ -73,6 +73,12 @@ void SpeedGaugeWidget::setSpeedValueText(const QString &text)
     update();
 }
 
+void SpeedGaugeWidget::setNightMode(bool night)
+{
+    m_nightMode = night;
+    update();
+}
+
 void SpeedGaugeWidget::paintEvent(QPaintEvent *event)
 {
     QWidget::paintEvent(event);
@@ -82,11 +88,21 @@ void SpeedGaugeWidget::paintEvent(QPaintEvent *event)
 
     const QRectF outerCircle(0, 0, kOuterSize, kOuterSize);
 
+    const QColor arcTrack = m_nightMode ? QColor(255, 255, 255, 0x80) : QColor(91, 115, 171, 0x80);
+    const QColor arcFill  = m_nightMode ? QColor(Qt::white)           : QColor(0x5B, 0x73, 0xAB);
+
     QLinearGradient grad(0, 0, 0, height());
-    grad.setColorAt(0.0, QColor(0, 0, 0, 128));
-    grad.setColorAt(0.354, QColor(0, 0, 0, 128));
-    grad.setColorAt(0.7872, QColor(0, 0, 0, 0));
-    grad.setColorAt(1.0, QColor(0, 0, 0, 0));
+    if (m_nightMode) {
+        grad.setColorAt(0.0,    QColor(0, 0, 0, 128));
+        grad.setColorAt(0.354,  QColor(0, 0, 0, 128));
+        grad.setColorAt(0.7872, QColor(0, 0, 0, 0));
+        grad.setColorAt(1.0,    QColor(0, 0, 0, 0));
+    } else {
+        grad.setColorAt(0.0,    QColor(91, 115, 171, 40));
+        grad.setColorAt(0.354,  QColor(91, 115, 171, 40));
+        grad.setColorAt(0.7872, QColor(91, 115, 171, 0));
+        grad.setColorAt(1.0,    QColor(91, 115, 171, 0));
+    }
 
     QPainterPath disk;
     disk.addEllipse(outerCircle);
@@ -96,18 +112,15 @@ void SpeedGaugeWidget::paintEvent(QPaintEvent *event)
     const QRectF inner(margin, margin, kInnerSize, kInnerSize);
     const QPointF center = inner.center();
 
-    p.setPen(QPen(QColor(255, 255, 255, 0x80), kArcPenPx, Qt::SolidLine, Qt::FlatCap));
-    p.setBrush(Qt::NoBrush);
-
     const QRect innerRect = inner.toRect();
     p.setClipRect(QRectF(0, 0, width(), center.y() + 2.0));
 
-    // 底轨：完整上半圆弧（半透明白）
-    p.setPen(QPen(QColor(255, 255, 255, 0x80), kArcPenPx, Qt::SolidLine, Qt::FlatCap));
+    // 底轨：完整上半圆弧（半透明）
+    p.setPen(QPen(arcTrack, kArcPenPx, Qt::SolidLine, Qt::FlatCap));
     p.setBrush(Qt::NoBrush);
     p.drawArc(innerRect, 180 * 16, -180 * 16);
 
-    // 当前船速填充：同半径 6px 实白弧，长度 = (speed/max) 保留一位小数 × 180°
+    // 当前船速填充弧，长度 = (speed/max) 保留一位小数 × 180°
     double rawRatio = 0.0;
     if (m_maxSpeedMps > 0.0) {
         rawRatio = m_speedMps / m_maxSpeedMps;
@@ -118,7 +131,7 @@ void SpeedGaugeWidget::paintEvent(QPaintEvent *event)
     const int spanFillSixteenths = static_cast<int>(std::lround(static_cast<double>(spanFullSixteenths) * fillRatio));
 
     if (spanFillSixteenths != 0) {
-        p.setPen(QPen(Qt::white, kArcPenPx, Qt::SolidLine, Qt::FlatCap));
+        p.setPen(QPen(arcFill, kArcPenPx, Qt::SolidLine, Qt::FlatCap));
         p.drawArc(innerRect, 180 * 16, spanFillSixteenths);
     }
 

@@ -225,6 +225,13 @@ void RightWidget::setNavInfo(const NavInfo &info)
     }
 }
 
+void RightWidget::setAppNightMode(bool isNight)
+{
+    if (m_thrusterRpm) m_thrusterRpm->setNightMode(isNight);
+    if (m_rudderGauge) m_rudderGauge->setNightMode(isNight);
+    if (m_speedGauge)  m_speedGauge->setNightMode(isNight);
+}
+
 void RightWidget::refresh()
 {
     if (m_latValueLabel) {

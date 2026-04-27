@@ -24,14 +24,16 @@ public:
     void setMaxSpeedMps(double maxSpeedMps);
 
     void setSpeedValueText(const QString &text);
+    void setNightMode(bool night);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
     QLabel *m_valueLabel = nullptr;
-    double m_speedMps    = 0.0;
-    double m_maxSpeedMps = 20.0;
+    double  m_speedMps    = 0.0;
+    double  m_maxSpeedMps = 20.0;
+    bool    m_nightMode   = true;
 };
 
 #endif // SPEEDGAUGEWIDGET_H

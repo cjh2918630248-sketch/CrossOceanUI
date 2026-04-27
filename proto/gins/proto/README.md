@@ -1,0 +1,1 @@
+在此目录下输入：protoc --proto_path=.. --cpp_out=proto gins/data.proto 2>&1

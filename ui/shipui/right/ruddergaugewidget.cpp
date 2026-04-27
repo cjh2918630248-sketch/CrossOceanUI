@@ -1,5 +1,7 @@
 #include "right/ruddergaugewidget.h"
 
+#include <QPainterPath>
+
 namespace {
 // ── 整体尺寸 ────────────────────────────────────────────────────────
 constexpr int    kGaugeW   = 740;
@@ -28,22 +30,24 @@ constexpr int kArcPenW   = 2;
 constexpr int kMajorPenW = 2;
 constexpr int kMinorPenW = 1;
 
-// ── 字体 ────────────────────────────────────────────────────────────
+// ── 字体（Roll/Pitch/Heading 三列较原 12/18px 放大 ≥70%：21/31px）──
 constexpr int kTickFontPx = 15;
-constexpr int kValFontPx  = 18;   // 数值字号（内侧空间有限，适当缩小）
-constexpr int kLblFontPx  = 12;
+constexpr int kValFontPx  = 31;   // 数值
+constexpr int kLblFontPx  = 21;   // 列标题
 
 // ── 文字位置（gauge 控件坐标）──────────────────────────────────────────
-// 弧线内侧（凹面）：arcPeakY≈273.5，弧端点 y=370
-// 在 x=100/640 处弧线 y≈326，需 kLblY > 326 才完全落在内侧
-constexpr double kRolX  = 100.0;
-constexpr double kPitX  = 640.0;
-constexpr double kHdgX  = 370.0;
-constexpr double kTextW = 160.0;
-constexpr double kLblH  =  16.0;
-constexpr double kValH  =  22.0;
-constexpr double kLblY  = 330.0;  // 三列标签行 top（弧线内侧）
-constexpr double kValY  = 346.0;  // 三列数值行 top（底边 ≈ 368，紧贴控件底部）
+// 弧线内侧（凹面）：arc 端点 y=370 附近；底部两行文需落在完全可见的弧内侧
+// 三列以控件中心为对称轴，列间距 = kColGap（≤10），与两侧列的间隙相同
+constexpr double kGaugeCenterX = kGaugeW * 0.5; // 370
+constexpr double kColGap       = 8.0;   // 相邻两列外缘间距（需 ≤ 10）
+constexpr double kTextW        = 108.0; // 每列水平分配宽度（可略调避免裁字）
+constexpr double kRolX  = kGaugeCenterX - kTextW - kColGap;
+constexpr double kHdgX  = kGaugeCenterX;
+constexpr double kPitX  = kGaugeCenterX + kTextW + kColGap;
+constexpr double kValH  =  36.0;  // 数值行（上）
+constexpr double kLblH  =  24.0;  // 列标题行（下）
+constexpr double kValY  = 308.0;  // 数值行 top
+constexpr double kLblY  = 346.0;  // 标签行 top，346+24=370 贴底
 } // namespace
 
 // ── 辅助：设置字体 ───────────────────────────────────────────────────
@@ -83,6 +87,12 @@ void RudderGaugeWidget::setPitch(double degrees)
     update();
 }
 
+void RudderGaugeWidget::setNightMode(bool night)
+{
+    m_nightMode = night;
+    update();
+}
+
 void RudderGaugeWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
@@ -95,12 +105,40 @@ void RudderGaugeWidget::paintEvent(QPaintEvent *event)
     const double cy       = kGaugeH + kArcCenterDY;  // ≈ 993.54
     const double arcPeakY = cy - kRadius;            // ≈ 273.54（弧线最高点 y 坐标）
 
+    // 日/夜模式颜色
+    const QColor arcBgColor = m_nightMode ? QColor(QStringLiteral("#2B2B2B")) : QColor(QStringLiteral("#C8D4EE"));
+    const QColor arcFgColor = m_nightMode ? QColor(QStringLiteral("#FFFFFF")) : QColor(QStringLiteral("#5B73AB"));
+    const QColor colWhite   = m_nightMode ? QColor(QStringLiteral("#FFFFFF")) : QColor(QStringLiteral("#5B73AB"));
+    const QColor colGray    = m_nightMode ? QColor(QStringLiteral("#8F8F8F")) : QColor(QStringLiteral("#9AAED0"));
+    const QColor colText    = m_nightMode ? QColor(QStringLiteral("#FFFFFF")) : QColor(QStringLiteral("#5B73AB"));
+    const QColor colLbl     = m_nightMode ? QColor(255, 255, 255, 0x80)       : QColor(91, 115, 171, 0x80);
+
+    // ── 大刻度等宽的背景宽圆弧（径向厚度 = kMajorLen）──────────────────
+    {
+        const double        rIn  = kRadius;
+        const double        rOut = kRadius + kMajorLen;
+        const double        a60  = 60.0;
+        const double        a120 = 120.0;
+        const QRectF        outerR(cx - rOut, cy - rOut, 2.0 * rOut, 2.0 * rOut);
+        const QRectF        innerR(cx - rIn,  cy - rIn,  2.0 * rIn,  2.0 * rIn);
+        QPainterPath        wideArc;
+        wideArc.moveTo(cx + rOut * std::cos(qDegreesToRadians(a60)),
+                      cy - rOut * std::sin(qDegreesToRadians(a60)));
+        wideArc.arcTo(outerR, a60, 60.0);
+        wideArc.lineTo(cx + rIn * std::cos(qDegreesToRadians(a120)),
+                      cy - rIn * std::sin(qDegreesToRadians(a120)));
+        wideArc.arcTo(innerR, a120, -60.0);
+        wideArc.closeSubpath();
+        p.setPen(Qt::NoPen);
+        p.setBrush(arcBgColor);
+        p.drawPath(wideArc);
+    }
+
     // ── 主弧线（60°，从左下角经顶部到右下角）─────────────────────────
     {
         const QRectF arcRect(cx - kRadius, cy - kRadius,
                              kRadius * 2.0, kRadius * 2.0);
-        p.setPen(QPen(QColor(QStringLiteral("#FFFFFF")), kArcPenW,
-                      Qt::SolidLine, Qt::FlatCap));
+        p.setPen(QPen(arcFgColor, kArcPenW, Qt::SolidLine, Qt::FlatCap));
         p.setBrush(Qt::NoBrush);
         // Qt drawArc：0=3点钟，正值逆时针，单位 1/16°
         // 从 60°（右端点，即 3点+30°）逆时针转 60° 到 120°（左端点）= 经过 90°（顶部）
@@ -112,8 +150,6 @@ void RudderGaugeWidget::paintEvent(QPaintEvent *event)
     // 数学角 = 90° − arcPos；Qt 坐标：x = cx + R·cos, y = cy − R·sin
     {
         setGaugeFont(p, kTickFontPx, true);
-        const QColor colWhite(QStringLiteral("#FFFFFF"));
-        const QColor colGray(QStringLiteral("#8F8F8F"));
 
         const int centerDeg = static_cast<int>(std::floor(m_heading));
         for (int g = centerDeg - 31; g <= centerDeg + 31; ++g) {
@@ -173,36 +209,37 @@ void RudderGaugeWidget::paintEvent(QPaintEvent *event)
     p.setBrush(QColor(QStringLiteral("#FFBF00")));
     p.drawPolygon(tri);
 
-    // ── Roll / Pitch / Heading 文字（三列同高，位于刻度数字上方）────────
-    const QColor colText(QStringLiteral("#FFFFFF"));
-
+    // ── Roll / Pitch / Heading：数值在上、标签（Roll/Pitch/Heading）在下 ─
     // ROL（左列）
-    setGaugeFont(p, kLblFontPx, false);
-    p.setPen(colText);
-    p.drawText(QRectF(kRolX - kTextW * 0.5, kLblY, kTextW, kLblH),
-               Qt::AlignCenter, QStringLiteral("Roll"));
     setGaugeFont(p, kValFontPx, true);
+    p.setPen(colText);
     p.drawText(QRectF(kRolX - kTextW * 0.5, kValY, kTextW, kValH),
                Qt::AlignCenter,
                QString::number(m_roll, 'f', 1) + QStringLiteral("°"));
+    setGaugeFont(p, kLblFontPx, false);
+    p.setPen(colLbl);
+    p.drawText(QRectF(kRolX - kTextW * 0.5, kLblY, kTextW, kLblH),
+               Qt::AlignCenter, QStringLiteral("Roll"));
 
     // PIT（右列）
-    setGaugeFont(p, kLblFontPx, false);
-    p.setPen(colText);
-    p.drawText(QRectF(kPitX - kTextW * 0.5, kLblY, kTextW, kLblH),
-               Qt::AlignCenter, QStringLiteral("Pitch"));
     setGaugeFont(p, kValFontPx, true);
+    p.setPen(colText);
     p.drawText(QRectF(kPitX - kTextW * 0.5, kValY, kTextW, kValH),
                Qt::AlignCenter,
                QString::number(m_pitch, 'f', 1) + QStringLiteral("°"));
+    setGaugeFont(p, kLblFontPx, false);
+    p.setPen(colLbl);
+    p.drawText(QRectF(kPitX - kTextW * 0.5, kLblY, kTextW, kLblH),
+               Qt::AlignCenter, QStringLiteral("Pitch"));
 
     // HDG（中列）
-    setGaugeFont(p, kLblFontPx, false);
-    p.setPen(colText);
-    p.drawText(QRectF(kHdgX - kTextW * 0.5, kLblY, kTextW, kLblH),
-               Qt::AlignCenter, QStringLiteral("Heading"));
     setGaugeFont(p, kValFontPx, true);
+    p.setPen(colText);
     p.drawText(QRectF(kHdgX - kTextW * 0.5, kValY, kTextW, kValH),
                Qt::AlignCenter,
                QString::number(m_heading, 'f', 1) + QStringLiteral("°"));
+    setGaugeFont(p, kLblFontPx, false);
+    p.setPen(colLbl);
+    p.drawText(QRectF(kHdgX - kTextW * 0.5, kLblY, kTextW, kLblH),
+               Qt::AlignCenter, QStringLiteral("Heading"));
 }

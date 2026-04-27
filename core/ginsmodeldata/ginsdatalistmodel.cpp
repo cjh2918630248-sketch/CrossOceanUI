@@ -110,19 +110,20 @@ QVariant GinsDataListModel::data(const QModelIndex &index, int role) const
     case UtcLocalRole:   return d.utc_local100() / 100.0;
     case LatitudeRole:   return d.latitude1e7() / 1e7;
     case LongitudeRole:  return d.longitude1e7() / 1e7;
-    case AltitudeRole:   return d.altitude100() / 1000.0;
-    case RollDegRole:    return d.roll10() / 10.0;
-    case PitchDegRole:   return d.pitch10() / 10.0;
+    case AltitudeRole:   return d.altitude1e3() / 1000.0;
+    case RollDegRole:    return d.roll100() / 100.0;
+    case PitchDegRole:   return d.pitch100() / 100.0;
     case HeadingDegRole: return d.heading100() / 100.0;
+    case CourseDegRole:  return d.course100() / 100.0;
     case VnMpsRole:      return d.vn_mps100() / 100.0;
     case VeMpsRole:      return d.ve_mps100() / 100.0;
-    case RotiRole:       return d.roti100() / 100.0;
-    case AxRole:         return d.ax100() / 100.0;
-    case AyRole:         return d.ay100() / 100.0;
-    case AazRole:        return d.aaz100() / 100.0;
+    case RotiRole:       return d.roti1e5() / 1e5;
+    case AxRole:         return d.ax1e5() / 1e5;
+    case AyRole:         return d.ay1e5() / 1e5;
+    case AazRole:        return d.aaz1e5() / 1e5;
     case GinsStatusRole: return d.gins_status();
     case HdopRole:       return d.hdop10() / 10.0;
-    case HeadStdRole:    return d.head_std100() / 100.0;
+    case HeadStdRole:    return d.head_std1e5() / 1e5;
     default:             return QVariant();
     }
 }
@@ -160,7 +161,7 @@ void GinsDataListModel::printAllData() const
             << " port=" << static_cast<uint>(d.udp_port())
             << " lat=" << QString::number(d.latitude1e7() / 1e7, 'f', 6)
             << " lon=" << QString::number(d.longitude1e7() / 1e7, 'f', 6)
-            << " alt=" << QString::number(d.altitude100() / 1000.0, 'f', 2)
+            << " alt=" << QString::number(d.altitude1e3() / 1000.0, 'f', 2)
             << " heading=" << QString::number(d.heading100() / 100.0, 'f', 2)
             << " status=" << d.gins_status();
     }
@@ -267,6 +268,7 @@ QHash<int, QByteArray> GinsDataListModel::roleNames() const
         { RollDegRole,    "rollDeg"    },
         { PitchDegRole,   "pitchDeg"   },
         { HeadingDegRole, "headingDeg" },
+        { CourseDegRole,  "courseDeg"  },
         { VnMpsRole,      "vnMps"      },
         { VeMpsRole,      "veMps"      },
         { RotiRole,       "roti"       },
@@ -288,19 +290,20 @@ QVariantMap GinsDataListModel::protoToMap(const gins::data::OutMsg &d)
         { "utcLocal",    d.utc_local100() / 100.0                   },
         { "latitude",    d.latitude1e7() / 1e7                      },
         { "longitude",   d.longitude1e7() / 1e7                     },
-        { "altitude",    d.altitude100() / 1000.0                   },
-        { "rollDeg",     d.roll10() / 10.0                        },
-        { "pitchDeg",    d.pitch10() / 10.0                       },
+        { "altitude",    d.altitude1e3() / 1000.0                  },
+        { "rollDeg",     d.roll100() / 100.0                      },
+        { "pitchDeg",    d.pitch100() / 100.0                     },
         { "headingDeg",  d.heading100() / 100.0                   },
+        { "courseDeg",   d.course100() / 100.0                    },
         { "vnMps",       d.vn_mps100() / 100.0                    },
         { "veMps",       d.ve_mps100() / 100.0                    },
-        { "roti",        d.roti100() / 100.0                      },
-        { "ax",          d.ax100() / 100.0                        },
-        { "ay",          d.ay100() / 100.0                        },
-        { "aaz",         d.aaz100() / 100.0                       },
+        { "roti",        d.roti1e5() / 1e5                        },
+        { "ax",          d.ax1e5() / 1e5                          },
+        { "ay",          d.ay1e5() / 1e5                          },
+        { "aaz",         d.aaz1e5() / 1e5                         },
         { "ginsStatus",  d.gins_status()                          },
         { "hdop",        d.hdop10() / 10.0                        },
-        { "headStd",     d.head_std100() / 100.0                  },
+        { "headStd",     d.head_std1e5() / 1e5                    },
     };
 }
 
@@ -318,29 +321,31 @@ void GinsDataListModel::mapToProto(const QVariantMap &map, gins::data::OutMsg &d
     if (map.contains("longitude"))
         d.set_longitude1e7(static_cast<int32_t>(qRound64(map["longitude"].toDouble() * 1e7)));
     if (map.contains("altitude"))
-        d.set_altitude100(static_cast<int32_t>(qRound64(map["altitude"].toDouble() * 1000.0)));
+        d.set_altitude1e3(static_cast<int32_t>(qRound64(map["altitude"].toDouble() * 1000.0)));
     if (map.contains("rollDeg"))
-        d.set_roll10(static_cast<int32_t>(map["rollDeg"].toDouble() * 10.0));
+        d.set_roll100(static_cast<int32_t>(qRound64(map["rollDeg"].toDouble() * 100.0)));
     if (map.contains("pitchDeg"))
-        d.set_pitch10(static_cast<int32_t>(map["pitchDeg"].toDouble() * 10.0));
+        d.set_pitch100(static_cast<int32_t>(qRound64(map["pitchDeg"].toDouble() * 100.0)));
     if (map.contains("headingDeg"))
-        d.set_heading100(static_cast<int32_t>(qRound64(map["headingDeg"].toDouble() * 100.0)));
+        d.set_heading100(static_cast<uint32_t>(qRound64(map["headingDeg"].toDouble() * 100.0)));
+    if (map.contains("courseDeg"))
+        d.set_course100(static_cast<uint32_t>(qRound64(map["courseDeg"].toDouble() * 100.0)));
     if (map.contains("vnMps"))
         d.set_vn_mps100(static_cast<int32_t>(map["vnMps"].toDouble() * 100.0));
     if (map.contains("veMps"))
         d.set_ve_mps100(static_cast<int32_t>(map["veMps"].toDouble() * 100.0));
     if (map.contains("roti"))
-        d.set_roti100(static_cast<int32_t>(qRound64(map["roti"].toDouble() * 100.0)));
+        d.set_roti1e5(static_cast<int32_t>(qRound64(map["roti"].toDouble() * 1e5)));
     if (map.contains("ax"))
-        d.set_ax100(static_cast<int32_t>(qRound64(map["ax"].toDouble() * 100.0)));
+        d.set_ax1e5(static_cast<int32_t>(qRound64(map["ax"].toDouble() * 1e5)));
     if (map.contains("ay"))
-        d.set_ay100(static_cast<int32_t>(qRound64(map["ay"].toDouble() * 100.0)));
+        d.set_ay1e5(static_cast<int32_t>(qRound64(map["ay"].toDouble() * 1e5)));
     if (map.contains("aaz"))
-        d.set_aaz100(static_cast<int32_t>(qRound64(map["aaz"].toDouble() * 100.0)));
+        d.set_aaz1e5(static_cast<int32_t>(qRound64(map["aaz"].toDouble() * 1e5)));
     if (map.contains("ginsStatus"))
         d.set_gins_status(map["ginsStatus"].toUInt());
     if (map.contains("hdop"))
         d.set_hdop10(static_cast<uint32_t>(map["hdop"].toDouble() * 10.0));
     if (map.contains("headStd"))
-        d.set_head_std100(static_cast<int32_t>(qRound64(map["headStd"].toDouble() * 100.0)));
+        d.set_head_std1e5(static_cast<int32_t>(qRound64(map["headStd"].toDouble() * 1e5)));
 }

@@ -20,6 +20,7 @@ class GinsDataModel : public QObject {
     Q_PROPERTY(double rollDeg    READ rollDeg    WRITE setRollDeg    NOTIFY rollDegChanged)
     Q_PROPERTY(double pitchDeg   READ pitchDeg   WRITE setPitchDeg   NOTIFY pitchDegChanged)
     Q_PROPERTY(double headingDeg READ headingDeg WRITE setHeadingDeg NOTIFY headingDegChanged)
+    Q_PROPERTY(double courseDeg  READ courseDeg  WRITE setCourseDeg  NOTIFY courseDegChanged)
     Q_PROPERTY(double vnMps      READ vnMps      WRITE setVnMps      NOTIFY vnMpsChanged)
     Q_PROPERTY(double veMps      READ veMps      WRITE setVeMps      NOTIFY veMpsChanged)
     Q_PROPERTY(double roti       READ roti       WRITE setRoti       NOTIFY rotiChanged)
@@ -51,6 +52,7 @@ public:
     double rollDeg()    const;
     double pitchDeg()   const;
     double headingDeg() const;
+    double courseDeg()  const;
     double vnMps()      const;
     double veMps()      const;
     double roti()       const;
@@ -70,6 +72,7 @@ public:
     void setRollDeg(double value);
     void setPitchDeg(double value);
     void setHeadingDeg(double value);
+    void setCourseDeg(double value);
     void setVnMps(double value);
     void setVeMps(double value);
     void setRoti(double value);
@@ -107,6 +110,7 @@ signals:
     void rollDegChanged();
     void pitchDegChanged();
     void headingDegChanged();
+    void courseDegChanged();
     void vnMpsChanged();
     void veMpsChanged();
     void rotiChanged();

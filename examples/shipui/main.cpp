@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     view.show();
 
     TimerViewDemo timerDemo(view.shipUiWidget(), &app);
-    timerDemo.start(1000);
+    timerDemo.start(50);
 
     return QCoreApplication::exec();
 }
